@@ -5,7 +5,7 @@ function HorizontalLine() {
   return <View className="my-4 h-[1px] w-full bg-gray-300" />;
 }
 
-const NavBar = () => {
+const TopBar = () => {
   return (
     <>
       <View className="flex flex-row justify-between">
@@ -35,4 +35,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default TopBar;
