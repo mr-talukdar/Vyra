@@ -2,7 +2,7 @@ import { View, Image, Text } from "react-native";
 import CircleButton from "./ui/CircleButton";
 
 function HorizontalLine() {
-  return <View className="my-4 h-[1px] w-full bg-gray-300" />;
+  return <View className="h-[1px] bg-gray-100 ml-15" />;
 }
 
 const TopBar = () => {
