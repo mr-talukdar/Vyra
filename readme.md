@@ -77,11 +77,23 @@ VYRA uses a pnpm monorepo to keep the mobile application, backend API, and share
 ```text
 vyra/
 ├── apps/
-│   └── mobile/          # React Native + Expo application
+│   └── mobile/                        # React Native + Expo application
+│       └── src/
+│           ├── app/                    # Expo Router screens
+│           ├── components/
+│           │   ├── home/              # Home screen section components
+│           │   │   ├── StatsRow.tsx
+│           │   │   ├── FeaturedChallenge.tsx
+│           │   │   ├── DailyChallenge.tsx
+│           │   │   └── AnnouncementList.tsx
+│           │   ├── ui/                # Reusable UI primitives
+│           │   ├── HomeScrollView.tsx
+│           │   └── NavBar.tsx
+│           └── ...
 ├── packages/
-│   └── contracts/       # Shared types and API contracts
+│   └── contracts/                     # Shared types and API contracts
 ├── services/
-│   └── api/             # Express REST API
+│   └── api/                           # Express REST API
 ├── package.json
 ├── pnpm-workspace.yaml
 └── README.md
@@ -168,9 +180,9 @@ Refer to the API service's own documentation for its environment setup and datab
 
 - [x] Initialize the mobile application
 - [x] Configure NativeWind
-- [ ] Establish the navigation structure
-- [ ] Implement the design system and reusable components
-- [ ] Build the dashboard UI
+- [x] Establish the navigation structure
+- [x] Implement the design system and reusable components
+- [x] Build the dashboard UI
 - [ ] Implement authentication and user profiles
 - [ ] Establish database schema and migrations
 - [ ] Build the Express API foundation
