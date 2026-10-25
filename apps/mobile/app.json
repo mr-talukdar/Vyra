@@ -17,6 +17,7 @@
       },
       "predictiveBackGestureEnabled": false
     },
+    "ios": { "supportsTablet": true },
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png",

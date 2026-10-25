@@ -1,5 +1,6 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import ReusableCard from "../ui/ReusableCard";
 
 export const announcementCategories = [
@@ -37,24 +38,28 @@ export const announcementCategories = [
 
 export const announcements = [
   {
+    id: 1,
     title: "Q3 Architecture Review Live",
     time: new Date().getTime(),
     category: 1,
     description: "Watch the recorded briefing and review key takeaways",
   },
   {
+    id: 2,
     title: "New Mentorship Program Launch",
     time: new Date().getTime(),
     category: 2,
     description: "Sign up to be a mentor or mentee for the next quarter",
   },
   {
+    id: 3,
     title: "Mandatory Security Training Due",
     time: new Date().getTime(),
     category: 3,
     description: "Complete your annual security awareness training by Nov 15",
   },
   {
+    id: 4,
     title: "AWS Certification Cohort Open",
     time: new Date().getTime(),
     category: 4,
@@ -62,12 +67,14 @@ export const announcements = [
       "Join the study group for AWS Solutions Architect certification",
   },
   {
+    id: 5,
     title: "Series C Funding Announced",
     time: new Date().getTime(),
     category: 5,
     description: "Read the CEO's letter about our latest funding milestone",
   },
   {
+    id: 6,
     title: "Platform Migration to K8s",
     time: new Date().getTime(),
     category: 1,
@@ -75,6 +82,7 @@ export const announcements = [
       "All services must migrate to the new Kubernetes cluster by Q4",
   },
   {
+    id: 7,
     title: "Hackathon Results Are In",
     time: new Date().getTime(),
     category: 2,
@@ -103,8 +111,10 @@ const AnnouncementItem = ({
   description,
   time,
   category,
+  id,
   isLast,
 }: {
+  id: number;
   title: string;
   description: string;
   time: number;
@@ -116,31 +126,33 @@ const AnnouncementItem = ({
 
   return (
     <View>
-      <View className="flex flex-row items-center gap-3 py-3">
-        {/* Icon */}
-        <View
-          className="w-12 h-12 rounded-xl items-center justify-center"
-          style={{ backgroundColor: cat.color + "18" }}>
-          <Ionicons name={cat.renderIcon} size={22} color={cat.color} />
-        </View>
-
-        {/* Content */}
-        <View className="flex-1 flex-col gap-1">
-          <View className="flex flex-row justify-between items-center">
-            <Text
-              className="text-xs font-bold uppercase"
-              style={{ color: cat.color }}>
-              {cat.name}
-            </Text>
-            <Text className="text-xs text-gray-400">{getTimeAgo(time)}</Text>
+      <Pressable onPress={() => router.push(`/anouncements/${id}`)}>
+        <View className="flex flex-row items-center gap-3 py-3">
+          {/* Icon */}
+          <View
+            className="w-12 h-12 rounded-xl items-center justify-center"
+            style={{ backgroundColor: cat.color + "18" }}>
+            <Ionicons name={cat.renderIcon} size={22} color={cat.color} />
           </View>
-          <Text className="text-base font-bold text-gray-900">{title}</Text>
-          <Text className="text-sm text-gray-500">{description}</Text>
-        </View>
 
-        {/* Chevron */}
-        <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
-      </View>
+          {/* Content */}
+          <View className="flex-1 flex-col gap-1">
+            <View className="flex flex-row justify-between items-center">
+              <Text
+                className="text-xs font-bold uppercase"
+                style={{ color: cat.color }}>
+                {cat.name}
+              </Text>
+              <Text className="text-xs text-gray-400">{getTimeAgo(time)}</Text>
+            </View>
+            <Text className="text-base font-bold text-gray-900">{title}</Text>
+            <Text className="text-sm text-gray-500">{description}</Text>
+          </View>
+
+          {/* Chevron */}
+          <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
+        </View>
+      </Pressable>
 
       {/* Divider */}
       {!isLast && <View className="h-[1px] bg-gray-100 ml-15" />}
@@ -158,7 +170,8 @@ const AnnouncementList = () => {
       <ReusableCard className="p-2">
         {announcements.map((item, index) => (
           <AnnouncementItem
-            key={index}
+            key={item.id}
+            id={item.id}
             title={item.title}
             description={item.description}
             time={item.time}
