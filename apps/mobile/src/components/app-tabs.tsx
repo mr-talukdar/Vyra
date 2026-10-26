@@ -11,7 +11,11 @@ export default function AppTabs() {
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
+            <Ionicons
+              name="home-outline"
+              size={size}
+              color={typeof color === "string" ? color : "#687076"}
+            />
           ),
         }}
       />
@@ -21,7 +25,11 @@ export default function AppTabs() {
           title: "Learn",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="school" size={size} color={color} />
+            <MaterialIcons
+              name="school"
+              size={size}
+              color={typeof color === "string" ? color : "#687076"}
+            />
           ),
         }}
       />
@@ -31,7 +39,11 @@ export default function AppTabs() {
           title: "Leaderboard",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="trophy-outline" size={size} color={color} />
+            <Ionicons
+              name="trophy-outline"
+              size={size}
+              color={typeof color === "string" ? color : "#687076"}
+            />
           ),
         }}
       />
@@ -41,7 +53,11 @@ export default function AppTabs() {
           title: "Profile",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person" size={size} color={color} />
+            <Ionicons
+              name="person"
+              size={size}
+              color={typeof color === "string" ? color : "#687076"}
+            />
           ),
         }}
       />

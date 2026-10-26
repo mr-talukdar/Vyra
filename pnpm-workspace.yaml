@@ -4,4 +4,6 @@ packages:
   - "services/*"
 allowBuilds:
   esbuild: false
+  dtrace-provider: true
+  protobufjs: true
   unrs-resolver: false
