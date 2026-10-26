@@ -47,7 +47,8 @@
     "build:android:local": "eas build --platform android --profile preview --local",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "typecheck": "tsc --noEmit"
   },
   "private": true
 }

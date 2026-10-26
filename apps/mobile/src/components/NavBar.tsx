@@ -12,7 +12,7 @@ const TopBar = () => {
         <View>
           <Text className="text-2xl font-bold">Good Morning, Alex</Text>
           <Text className="text-md text-neutral pb-2">
-            Here's your learning snapshot
+            {" Here's your learning snapshot"}
           </Text>
         </View>
         <View className="flex flex-row gap-1 justify-center items-center">

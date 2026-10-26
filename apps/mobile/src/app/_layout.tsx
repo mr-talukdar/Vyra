@@ -5,8 +5,8 @@ import {
   Stack,
   ThemeProvider,
 } from "expo-router";
-import { useColorScheme } from "react-native";
-import { Pressable, Text, View } from "react-native";
+
+import { Pressable, Text, View, useColorScheme } from "react-native";
 
 import "../global.css";
 
@@ -19,9 +19,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
       <Text className="mb-6 text-center text-sm text-gray-600">
         {error.message}
       </Text>
-      <Pressable
-        onPress={retry}
-        className="rounded-xl bg-[#3525CD] px-5 py-3">
+      <Pressable onPress={retry} className="rounded-xl bg-[#3525CD] px-5 py-3">
         <Text className="font-bold text-white">Try again</Text>
       </Pressable>
     </View>
