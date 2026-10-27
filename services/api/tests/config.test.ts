@@ -30,4 +30,9 @@ describe("environment config", () => {
       }),
     ).toThrow();
   });
+  it("defaults to port 3000 when PORT is missing", () => {
+    const environment = loadEnvironment({});
+
+    expect(environment.PORT).toBe(3000);
+  });
 });
