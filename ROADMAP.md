@@ -70,13 +70,13 @@ below require confirmation before the dependent work is treated as committed.
 | Announcements | `PARTIAL` | List/detail presentation and route navigation exist; data, pagination, authorization, publish state, and loading/error states do not. |
 | Learn/quizzes/challenges | `PARTIAL` | Learn, featured quiz, and daily challenge visuals exist; no course, quiz, attempt, completion, points, or streak behavior is implemented. |
 | Leaderboard/profile | `PARTIAL` | Screens render static rankings and profile data; identity, query rules, privacy, edits, and persistence are absent. |
-| Backend foundation | `PARTIAL` | Express app, server entrypoint, JSON middleware, and health routes exist. Configuration, error middleware, tests, and feature modules are absent. |
-| Health checks | `PARTIAL` | The live and ready routes and their current source behavior are verified, but no HTTP test is committed and readiness is only a timer simulation rather than a real dependency check. |
+| Backend foundation | `PARTIAL` | Express app, server entrypoint, validated PORT configuration, request IDs, JSON error responses, health routes, and API tests exist. Security middleware, real dependency checks, and feature modules remain. |
+| Health checks | `PARTIAL` | Liveness and simulated readiness are covered by HTTP tests. Readiness is still a timer simulation rather than a real dependency check, and failure/timeout cases remain. |
 | Shared contracts | `NOT STARTED` | `packages/contracts` has no implementation or package manifest. |
 | Database and storage | `NOT STARTED` | No schema, migrations, database client, Supabase project configuration, or storage integration exists. |
 | Authentication/authorization | `NOT STARTED` | `jsonwebtoken` is listed, but no token verification, session flow, role model, or protected route exists. |
 | Validation/error/security | `NOT STARTED` | No Zod, structured error format, CORS policy, security headers, rate limiting, redaction, or request validation is configured. |
-| Automated testing | `NOT STARTED` | No tracked test files or test scripts were found. |
+| Automated testing | `PARTIAL` | Vitest/Supertest API scripts and configuration, health/configuration tests, 404/error tests, and request-ID tests exist. Workspace orchestration, fixtures, and database isolation remain. |
 | CI/CD/deployment/operations | `NOT STARTED` | No workflow, build profile, hosting configuration, monitoring, backups, or runbook exists. |
 
 ## 3. Existing architecture and technology stack
@@ -299,7 +299,8 @@ and should change only after the acceptance criteria pass.
 
 #### `SETUP-004` Establish deterministic development scripts
 
-- [ ] **Status:** `PARTIAL` - root `typecheck`, `lint`, and `dev:api` exist.
+- [x] **Status:** `DONE` - root typecheck/lint, mobile typecheck, API test/watch,
+  and API development scripts exist; ESLint configuration is committed.
 - **Objective:** Provide explicit, non-deceptive scripts for mobile/API
   development, type checking, linting, tests, builds, and formatting.
 - **Actions:** Add only scripts backed by configured tools; add API test and
@@ -309,7 +310,8 @@ and should change only after the acceptance criteria pass.
 - **Deliverables:** Root and package scripts, committed configs, command table.
 - **Acceptance criteria:** Each documented command exists or is explicitly
   labeled planned; failures return non-zero and do not auto-create config.
-- **Verification:** Run each available command from a clean checkout.
+- **Verification:** `pnpm typecheck`; `pnpm lint`;
+  `pnpm --filter @client-platform/api test`.
 - **Priority:** P0. **Effort:** M.
 - **Learning objective:** Learn how package scripts form a reproducible build
   interface.
@@ -351,8 +353,10 @@ and should change only after the acceptance criteria pass.
 
 #### `API-001` Harden application startup and configuration
 
-- [ ] **Status:** `PARTIAL` - app/server entrypoints exist; configuration is
-  only `PORT` placeholder.
+- [ ] **Status:** `PARTIAL` - Zod-backed PORT parsing, range validation,
+  defaults, server integration, and configuration tests are implemented.
+  Allowed origins, log level, graceful shutdown, and production-specific
+  configuration remain.
 - **Objective:** Make startup typed, environment-aware, and safe.
 - **Actions:** Add validated environment parsing, explicit port handling,
   allowed origins, log level, database URL placeholders, and graceful
@@ -369,7 +373,10 @@ and should change only after the acceptance criteria pass.
 
 #### `API-002` Define HTTP errors and request middleware
 
-- [ ] **Status:** `NOT STARTED`.
+- [ ] **Status:** `PARTIAL` - request IDs, client-provided ID propagation,
+  JSON 404 responses, generic 500 handling, and related HTTP tests exist.
+  Stable error codes, bounded body parsing, malformed-JSON handling, and
+  redacted structured logging remain.
 - **Objective:** Provide consistent safe responses and request diagnostics.
 - **Actions:** Add request IDs, not-found handling, typed error classes,
   final error middleware, JSON response conventions, body size limits, and
@@ -895,7 +902,10 @@ and should change only after the acceptance criteria pass.
 
 #### `TEST-001` Establish backend test infrastructure
 
-- [ ] **Status:** `NOT STARTED`.
+- [ ] **Status:** `PARTIAL` - Vitest/Supertest scripts, configuration tests,
+  health tests, error tests, and request-ID tests exist. Shared test
+  configuration, workspace orchestration, fixtures, and database isolation
+  remain.
 - **Objective:** Add the intended Vitest/Supertest foundation without claiming
   coverage prematurely.
 - **Actions:** Configure unit and HTTP integration projects, test app imports,
@@ -910,7 +920,10 @@ and should change only after the acceptance criteria pass.
 
 #### `TEST-002` Cover health and API failure behavior
 
-- [ ] **Status:** `NOT STARTED`.
+- [ ] **Status:** `PARTIAL` - liveness, readiness success, 404, generic 500,
+  generated request IDs, and client-provided request IDs are covered.
+  Readiness failure/timeout, malformed JSON, body limits, and redaction
+  assertions remain.
 - **Objective:** Prove baseline routes and middleware behavior.
 - **Actions:** Test liveness, readiness success/timeout/failure, malformed
   JSON, 404, error envelope, request IDs, and redaction.
@@ -1284,8 +1297,9 @@ result from the relevant environment.
 
 | Command | Current result | Meaning |
 | --- | --- | --- |
-| `pnpm typecheck` | Passes | Current TypeScript sources type-check. |
-| `pnpm lint` | Fails | Existing mobile lint errors/warnings remain; see `QUALITY-001`. |
+| `pnpm typecheck` | Passes | Mobile and API TypeScript sources type-check. |
+| `pnpm lint` | Passes | Committed ESLint configuration runs without generation or errors. |
+| `pnpm --filter @client-platform/api test` | Passes | API Vitest/Supertest suite passes; current run has 10 tests across 2 files. |
 | `pnpm dev:api` | Root script exists | Command availability was verified; it was not treated as a successful runtime smoke test in this audit. |
 | `pnpm --filter mobile start` | Mobile package script exists | Command availability was verified; it requires a device/Expo session and was not treated as a completed integration check. |
 
@@ -1354,7 +1368,7 @@ evidence, deployment rollback, and approved product acceptance.
 | Single versus multi-tenant scope unresolved | Can force schema and authorization rework | Decide organization boundary and test it in `DB-001`. |
 | Prisma/Supabase connection strategy unresolved | Risks migrations, pooling, and production outages | Resolve `ARCH-001` and verify against selected Supabase tier. |
 | Scoring/streak/leaderboard rules unspecified | Users may see inconsistent rewards/rankings | Approve rule examples before `CHAL-001`/`LEAD-001`. |
-| No committed test/lint configuration | Regressions and nondeterministic onboarding | Complete `SETUP-004`, `TEST-001`, `QUALITY-001`. |
+| Incomplete API failure coverage | Regressions or unsafe error responses may go undetected | Complete the remaining `API-002` and `TEST-002` cases. |
 | Static fixtures may be mistaken for real progress | Product demos can hide missing behavior | Replace incrementally and prohibit fixture fallback in `MOB-002`. |
 | Existing dirty health controller | Accidental overwrite or confusing baseline | Preserve it and reconcile explicitly in `API-002`, `API-003`, and `TEST-002`; do not reset it. |
 | Deployment provider and credentials unknown | Release tasks cannot be executed | Choose environments in `DEPLOY-001`. |
@@ -1378,16 +1392,16 @@ evidence, deployment rollback, and approved product acceptance.
 
 ### Next Recommended Tasks
 
-The highest-priority unblocked sequence is:
+The highest-priority sequence, after the completed tooling checkpoint, is:
 
-1. `SETUP-001` - preserve the baseline and agree on evidence conventions.
-2. `SETUP-002` - confirm identity, roles, tenancy, scoring, and MVP scope.
-3. `SETUP-004` - make scripts/configuration deterministic while preserving
-   the current UI and API scaffold.
-4. `QUALITY-001` - clear the known lint failures after the config is committed.
-5. `ARCH-001` - decide Prisma/Supabase/Auth responsibilities.
-6. `CONTRACT-001` and `TEST-001` - establish the shared boundary and test
-   foundation before adding feature code.
+1. Finish the remaining `API-002` and `TEST-002` cases: stable error codes,
+   bounded JSON parsing, malformed-JSON behavior, and redaction assertions.
+2. `API-004` - add and test security middleware.
+3. `SETUP-002` - confirm identity, roles, tenancy, scoring, and MVP scope.
+4. `ARCH-001` - decide Prisma/Supabase/Auth responsibilities.
+5. `CONTRACT-001` - establish shared request/response schemas.
+6. Complete the remaining `TEST-001` infrastructure work, including
+   workspace orchestration and isolation.
 7. `DB-001` through `DB-003`, then `AUTH-001` and `AUTH-002`.
 8. `DASH-001`, `DASH-002`, and `MOB-001` through `MOB-004` - complete the
    first vertical slice.

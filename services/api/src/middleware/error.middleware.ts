@@ -21,7 +21,7 @@ const genericErrorHandler = (
   res.status(500);
   res.json({
     error: {
-      code: "INTERNAL SERVER ERROR",
+      code: "INTERNAL_SERVER_ERROR",
       message: "An internal server error occurred",
       requestId: res.locals.requestId,
     },

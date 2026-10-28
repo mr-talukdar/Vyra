@@ -44,10 +44,18 @@ describe("health routes", () => {
     expect(response.status).toBe(500);
     expect(response.body).toEqual({
       error: {
-        code: "INTERNAL SERVER ERROR",
+        code: "INTERNAL_SERVER_ERROR",
         message: "An internal server error occurred",
         requestId: expect.any(String),
       },
     });
+  });
+  it("preserves client provided requestId", async () => {
+    const response = await request(app)
+      .get("/doesnt-exist")
+      .set("x-request-id", "test-request-123");
+    expect(response.status).toBe(404);
+    expect(response.headers["x-request-id"]).toBe("test-request-123");
+    expect(response.body.error.requestId).toBe("test-request-123");
   });
 });
