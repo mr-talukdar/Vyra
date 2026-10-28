@@ -43,7 +43,7 @@ Legend: `[x]` done · `[~]` partially complete · `[ ]` not started · `[!]` blo
 - [ ] **DB-001** — Model the initial domain and constraints _( NOT STARTED )_
   - Objective: Define a normalized, auditable MVP schema.
   - Dependencies: `SETUP-002`, `ARCH-001`.
-- [ ] **DB-002** — Configure Prisma and Supabase connections _( NOT STARTED )_
+- [~] **DB-002** — Configure Prisma and Supabase connections _( PARTIAL )_
   - Objective: Establish safe local and production database connectivity.
   - Dependencies: `ARCH-001`, `DB-001`, `API-001`.
 - [ ] **DB-003** — Create and verify migrations and seed data _( NOT STARTED )_

@@ -42,13 +42,19 @@ below require confirmation before the dependent work is treated as committed.
   `GET /health/live` and `GET /health/ready`.
 - The readiness implementation currently simulates a database check with a
   one-second timer and returns `{ name: "VYRA", ready: true }`; it does not
-  connect to a database. The controller also has a two-second timeout path
+  yet use the Prisma client. The controller also has a two-second timeout path
   that returns HTTP 503.
+- Prisma 7 is configured with the PostgreSQL adapter and a server-only
+  `SUPABASE_DIRECT_CONNECTION_STRING`; a database connection smoke test
+  verifies `SELECT 1` against the configured PostgreSQL database.
+- API unit/HTTP tests run without a database, while the database smoke test
+  runs separately through `test:integration`.
 - `packages/contracts` exists as an empty workspace directory. No shared
   schemas or types are present.
-- No Prisma schema, migrations, Supabase configuration, authentication
-  integration, API feature routes, test files, CI workflow, deployment
-  configuration, or observability setup was found in tracked files.
+- No domain models, migrations, authentication integration, API feature
+  routes, CI workflow, deployment configuration, or observability setup was
+  found in tracked files. The Prisma datasource and client wiring now exist,
+  but the schema still has no application models.
 - `pnpm typecheck` passed for the workspaces during this audit.
 - `pnpm lint` did not pass. Expo generated an untracked
   `apps/mobile/eslint.config.js` while configuring itself; that generated file
@@ -73,10 +79,10 @@ below require confirmation before the dependent work is treated as committed.
 | Backend foundation | `PARTIAL` | Express app, server entrypoint, validated PORT configuration, request IDs, JSON error responses, health routes, and API tests exist. Security middleware, real dependency checks, and feature modules remain. |
 | Health checks | `PARTIAL` | Liveness and simulated readiness are covered by HTTP tests. Readiness is still a timer simulation rather than a real dependency check, and failure/timeout cases remain. |
 | Shared contracts | `NOT STARTED` | `packages/contracts` has no implementation or package manifest. |
-| Database and storage | `NOT STARTED` | No schema, migrations, database client, Supabase project configuration, or storage integration exists. |
+| Database and storage | `PARTIAL` | Prisma 7 PostgreSQL client wiring, environment validation, setup documentation, and a live connection smoke test exist. Domain models, migrations, Supabase storage, and RLS remain. |
 | Authentication/authorization | `NOT STARTED` | `jsonwebtoken` is listed, but no token verification, session flow, role model, or protected route exists. |
 | Validation/error/security | `NOT STARTED` | No Zod, structured error format, CORS policy, security headers, rate limiting, redaction, or request validation is configured. |
-| Automated testing | `PARTIAL` | Vitest/Supertest API scripts and configuration, health/configuration tests, 404/error tests, and request-ID tests exist. Workspace orchestration, fixtures, and database isolation remain. |
+| Automated testing | `PARTIAL` | Vitest/Supertest API scripts, configuration/health/error/request-ID tests, and a separate Prisma database smoke test exist. Workspace orchestration, fixtures, failure-path coverage, and database isolation remain. |
 | CI/CD/deployment/operations | `NOT STARTED` | No workflow, build profile, hosting configuration, monitoring, backups, or runbook exists. |
 
 ## 3. Existing architecture and technology stack
@@ -354,8 +360,9 @@ and should change only after the acceptance criteria pass.
 #### `API-001` Harden application startup and configuration
 
 - [ ] **Status:** `PARTIAL` - Zod-backed PORT parsing, range validation,
-  defaults, server integration, and configuration tests are implemented.
-  Allowed origins, log level, graceful shutdown, and production-specific
+  defaults, required PostgreSQL connection-string validation, dotenv loading,
+  server integration, and configuration tests are implemented. Allowed
+  origins, log level, graceful shutdown, and production-specific
   configuration remain.
 - **Objective:** Make startup typed, environment-aware, and safe.
 - **Actions:** Add validated environment parsing, explicit port handling,
@@ -447,7 +454,11 @@ and should change only after the acceptance criteria pass.
 
 #### `DB-002` Configure Prisma and Supabase connections
 
-- [ ] **Status:** `NOT STARTED`.
+- [ ] **Status:** `PARTIAL` - Prisma 7, the PostgreSQL adapter, a generated
+  client, server-side client wiring, direct Supabase connection-string
+  validation, setup documentation, and a live `SELECT 1` smoke test exist.
+  Domain models, migrations, pooling/direct URL strategy, connection limits,
+  and production lifecycle handling remain.
 - **Objective:** Establish safe local and production database connectivity.
 - **Actions:** Add Prisma schema/client lifecycle, migration commands,
   pooled/direct URL strategy, SSL requirements, connection limits, and a
@@ -903,8 +914,9 @@ and should change only after the acceptance criteria pass.
 #### `TEST-001` Establish backend test infrastructure
 
 - [ ] **Status:** `PARTIAL` - Vitest/Supertest scripts, configuration tests,
-  health tests, error tests, and request-ID tests exist. Shared test
-  configuration, workspace orchestration, fixtures, and database isolation
+  health tests, error tests, request-ID tests, and a separately run Prisma
+  database connection smoke test exist. Shared test configuration, workspace
+  orchestration, fixtures, failure-path coverage, and database isolation
   remain.
 - **Objective:** Add the intended Vitest/Supertest foundation without claiming
   coverage prematurely.
@@ -914,7 +926,8 @@ and should change only after the acceptance criteria pass.
 - **Deliverables:** Test config, scripts, health/error tests.
 - **Acceptance criteria:** Tests run in a clean environment, isolate state,
   and fail on regressions.
-- **Verification:** Run targeted and full backend suites.
+- **Verification:** `pnpm --filter @client-platform/api test` and
+  `pnpm --filter @client-platform/api test:integration`.
 - **Priority:** P0. **Effort:** M.
 - **Learning objective:** Learn test boundaries and dependency isolation.
 

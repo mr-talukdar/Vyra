@@ -154,7 +154,32 @@ Replace `<repository-url>` with the actual Git repository URL.
 pnpm install
 ```
 
-### 3. Start the mobile application
+### 3. Configure the API
+
+The API validates its environment variables at startup. Create an environment
+file in `services/api` and provide the port and PostgreSQL connection string:
+
+```bash
+cp services/api/.env.example services/api/.env
+```
+
+Set the following values in `services/api/.env`:
+
+```dotenv
+PORT=3000
+SUPABASE_DIRECT_CONNECTION_STRING="postgresql://<user>:<password>@<host>:5432/<database>?sslmode=require"
+```
+
+Use the direct PostgreSQL connection string provided by Supabase. Do not commit
+`services/api/.env` or expose its credentials.
+
+Generate the Prisma client before starting the API:
+
+```bash
+pnpm --filter @client-platform/api prisma:generate
+```
+
+### 4. Start the mobile application
 
 ```bash
 pnpm --filter mobile start
@@ -164,17 +189,30 @@ Follow the Expo CLI instructions to open the application on your Android emulato
 
 This command assumes the mobile package is named `mobile` in its `package.json`.
 
-### 4. Start the backend
-
-Once the API service has been configured:
+### 5. Start the backend
 
 ```bash
 pnpm dev:api
 ```
 
-The backend requires its environment variables and database connection to be configured before it can start successfully.
+The API listens on the configured `PORT` and exposes the health endpoints
+`/health/live` and `/health/ready`.
 
-Refer to the API service's own documentation for its environment setup and database initialization instructions.
+### 6. Run API tests
+
+Run the unit and HTTP tests without requiring a live database:
+
+```bash
+pnpm --filter @client-platform/api test
+```
+
+Run the database connectivity integration test separately. This requires a
+reachable PostgreSQL database configured by
+`SUPABASE_DIRECT_CONNECTION_STRING`:
+
+```bash
+pnpm --filter @client-platform/api test:integration
+```
 
 ## Development Roadmap
 
