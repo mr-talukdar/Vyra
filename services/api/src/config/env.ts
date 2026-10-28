@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import "dotenv/config";
+
 const environmentSchema = z.object({
   PORT: z.coerce
     .number()
@@ -7,6 +9,7 @@ const environmentSchema = z.object({
     .min(1, "PORT must be atleast 1")
     .max(65535, "PORT must be most 65535")
     .default(3000),
+  SUPABASE_DIRECT_CONNECTION_STRING: z.url(),
 });
 
 export function loadEnvironment(
@@ -14,6 +17,7 @@ export function loadEnvironment(
 ): z.infer<typeof environmentSchema> {
   return environmentSchema.parse({
     PORT: input.PORT,
+    SUPABASE_DIRECT_CONNECTION_STRING: input.SUPABASE_DIRECT_CONNECTION_STRING,
   });
 }
 

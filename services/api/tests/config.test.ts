@@ -5,6 +5,7 @@ describe("environment config", () => {
   it("tests if it is an valid number", () => {
     const environment = loadEnvironment({
       PORT: "8080",
+      SUPABASE_DIRECT_CONNECTION_STRING: "http://test.db.url",
     });
     expect(environment.PORT).toBe(8080);
   });
@@ -12,6 +13,7 @@ describe("environment config", () => {
     expect(() => {
       loadEnvironment({
         PORT: "notanumber",
+        SUPABASE_DIRECT_CONNECTION_STRING: "http://test.db.url",
       });
     }).toThrow();
   });
@@ -19,6 +21,7 @@ describe("environment config", () => {
     expect(() =>
       loadEnvironment({
         PORT: "3000.5",
+        SUPABASE_DIRECT_CONNECTION_STRING: "http://test.db.url",
       }),
     ).toThrow();
   });
@@ -27,11 +30,14 @@ describe("environment config", () => {
     expect(() =>
       loadEnvironment({
         PORT: "70000",
+        SUPABASE_DIRECT_CONNECTION_STRING: "http://test.db.url",
       }),
     ).toThrow();
   });
   it("defaults to port 3000 when PORT is missing", () => {
-    const environment = loadEnvironment({});
+    const environment = loadEnvironment({
+      SUPABASE_DIRECT_CONNECTION_STRING: "http://test.db.url",
+    });
 
     expect(environment.PORT).toBe(3000);
   });
