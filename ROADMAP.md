@@ -51,10 +51,11 @@ below require confirmation before the dependent work is treated as committed.
   runs separately through `test:integration`.
 - `packages/contracts` exists as an empty workspace directory. No shared
   schemas or types are present.
-- No domain models, migrations, authentication integration, API feature
-  routes, CI workflow, deployment configuration, or observability setup was
-  found in tracked files. The Prisma datasource and client wiring now exist,
-  but the schema still has no application models.
+- No domain models, migrations, sign-in/session lifecycle, role model,
+  protected API routes, CI workflow, deployment configuration, or
+  observability setup was found in tracked files. Supabase authentication
+  integration now includes a validated sign-up endpoint, while the Prisma
+  schema still has no application models.
 - `pnpm typecheck` passed for the workspaces during this audit.
 - `pnpm lint` did not pass. Expo generated an untracked
   `apps/mobile/eslint.config.js` while configuring itself; that generated file
@@ -80,8 +81,8 @@ below require confirmation before the dependent work is treated as committed.
 | Health checks | `PARTIAL` | Liveness and simulated readiness are covered by HTTP tests. Readiness is still a timer simulation rather than a real dependency check, and failure/timeout cases remain. |
 | Shared contracts | `NOT STARTED` | `packages/contracts` has no implementation or package manifest. |
 | Database and storage | `PARTIAL` | Prisma 7 PostgreSQL client wiring, environment validation, setup documentation, and a live connection smoke test exist. Domain models, migrations, Supabase storage, and RLS remain. |
-| Authentication/authorization | `NOT STARTED` | `jsonwebtoken` is listed, but no token verification, session flow, role model, or protected route exists. |
-| Validation/error/security | `NOT STARTED` | No Zod, structured error format, CORS policy, security headers, rate limiting, redaction, or request validation is configured. |
+| Authentication/authorization | `PARTIAL` | Supabase client setup and `POST /api/auth/sign-up` now validate credentials, handle duplicate/weak-password errors, support email confirmation, and return session tokens. Sign-in, sign-out, refresh, token verification, roles, and protected routes remain. |
+| Validation/error/security | `PARTIAL` | Zod request/environment validation, request IDs, structured error responses, and signup failure mapping exist. CORS, security headers, rate limiting, redaction, and broader request-validation coverage remain. |
 | Automated testing | `PARTIAL` | Vitest/Supertest API scripts, configuration/health/error/request-ID tests, and a separate Prisma database smoke test exist. Workspace orchestration, fixtures, failure-path coverage, and database isolation remain. |
 | CI/CD/deployment/operations | `NOT STARTED` | No workflow, build profile, hosting configuration, monitoring, backups, or runbook exists. |
 
@@ -511,17 +512,22 @@ and should change only after the acceptance criteria pass.
 
 #### `AUTH-001` Implement authentication bootstrap
 
-- [ ] **Status:** `NOT STARTED`.
-- **Objective:** Provide the selected sign-in, sign-out, refresh, and
-  bootstrap behavior.
-- **Actions:** Configure Supabase Auth or approved identity provider; define
-  mobile secure token storage and renewal; add API token extraction and
-  verification; define invalid/expired token responses.
+- [~] **Status:** `PARTIAL` - Supabase client setup and signup are implemented;
+  sign-in, sign-out, refresh, confirmation completion, and token verification
+  remain.
+- **Objective:** Provide the selected sign-up, sign-in, sign-out, refresh, and
+  confirmation flows.
+- **Actions:** Keep the signup contract and error behavior consistent; add
+  sign-in, sign-out, refresh, confirmation completion, password reset, and
+  account deletion; define mobile secure token storage, API token extraction,
+  verification, and invalid/expired token responses.
 - **Dependencies:** `SETUP-002`, `API-001`, `ARCH-001`.
 - **Deliverables:** Auth configuration, mobile auth transport, API verifier.
 - **Acceptance criteria:** A real test user can sign in, restart the app,
   refresh a session, sign out, and receive 401 after expiry.
-- **Verification:** Auth integration tests and device/manual session checks.
+- **Verification:** Current signup verification is covered by API typechecking;
+  complete provider integration tests and device/manual session checks after
+  the remaining lifecycle endpoints are implemented.
 - **Priority:** P0. **Effort:** L.
 - **Learning objective:** Learn session lifecycle and why tokens must be
   handled differently on client and server.

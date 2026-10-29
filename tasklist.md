@@ -52,8 +52,14 @@ Legend: `[x]` done · `[~]` partially complete · `[ ]` not started · `[!]` blo
 - [ ] **DB-004** — Configure Supabase RLS and data-access boundaries _( NOT STARTED )_
   - Objective: Prevent cross-user and cross-tenant data access.
   - Dependencies: `DB-003`, `AUTH-002`, `SETUP-002`.
-- [ ] **AUTH-001** — Implement authentication bootstrap _( NOT STARTED )_
-  - Objective: Provide the selected sign-in, sign-out, refresh, and
+- [~] **AUTH-001** — Implement authentication bootstrap _( PARTIAL )_
+  - Objective: Provide the selected sign-up, sign-in, sign-out, refresh, and
+    confirmation flows.
+  - Delivered: Supabase client setup and `POST /api/auth/sign-up` with Zod
+    validation, duplicate-user and weak-password handling, email-confirmation
+    responses, and session token responses.
+  - Remaining: Sign-in, sign-out, refresh, confirmation completion, and
+    authentication tests.
   - Dependencies: `SETUP-002`, `API-001`, `ARCH-001`.
 - [ ] **AUTH-002** — Add users, roles, and authorization middleware _( NOT STARTED )_
   - Objective: Make identity and permissions available to modules.

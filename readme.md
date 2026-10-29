@@ -70,6 +70,32 @@ Features are being implemented incrementally. The list above describes the inten
 
 The stack describes the planned architecture. Individual services and integrations will be documented as they are implemented.
 
+## Implemented API authentication
+
+The API currently exposes a Supabase-backed signup endpoint:
+
+```text
+POST /api/auth/sign-up
+```
+
+It validates the email and password with Zod, handles duplicate users and weak
+passwords, supports email-confirmation-required signups, and returns session
+tokens when Supabase creates an active session. Sign-in, sign-out, refresh,
+roles, protected routes, and mobile auth integration are still planned.
+
+Example request:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "secure!pass"
+}
+```
+
+The API returns `201` with the user ID and session tokens when confirmation is
+not required, or `200` with `requireConfirmation: true` when email confirmation
+is required. Invalid input returns `400`; duplicate users return `409`.
+
 ## Architecture
 
 VYRA uses a pnpm monorepo to keep the mobile application, backend API, and shared contracts organized in one repository.
@@ -221,7 +247,8 @@ pnpm --filter @client-platform/api test:integration
 - [x] Establish the navigation structure
 - [x] Implement the design system and reusable components
 - [x] Build the dashboard UI
-- [ ] Implement authentication and user profiles
+- [~] Implement authentication and user profiles — Supabase signup is
+  implemented; sign-in, sessions, roles, and profiles remain
 - [ ] Establish database schema and migrations
 - [ ] Build the Express API foundation
 - [ ] Integrate mobile and backend authentication
