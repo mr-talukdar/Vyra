@@ -1,5 +1,5 @@
 {
-  "name": "mobile",
+  "name": "@client-platform/mobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
@@ -41,14 +41,15 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "start": "expo start",
+    "start": "expo start ",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "build:android:local": "eas build --platform android --profile preview --local",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "start:tunnel": "expo start --tunnel "
   },
   "private": true
 }
