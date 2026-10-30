@@ -1,15 +1,14 @@
 import type { Request, Response } from "express";
 import SupabaseClient from "../supabase/SupabaseClient.js";
-import { SignupDetailSchema } from "../zod/auth.schema.js";
+import { UserDetailSchema } from "../zod/auth.schema.js";
 
-import { ErrorMessage } from "../types/error.type.js";
+import { AuthApiResponse, ErrorMessage } from "../lib/utils.js";
 
 const signupController = async (req: Request, res: Response) => {
   try {
     if (!req.body) return res.status(400).send("NO email or password provided");
-    if (!req.body.email || !req.body.password)
-      return res.status(400).send("NO email or password provided");
-    const result = SignupDetailSchema.safeParse({
+
+    const result = UserDetailSchema.safeParse({
       email: req.body.email,
       password: req.body.password,
     });
@@ -40,14 +39,18 @@ const signupController = async (req: Request, res: Response) => {
         message: "Need Confirmation",
         requireConfirmation: true,
       });
-    return res.status(201).json({
-      status: 201,
-      message: "User has been created",
-      id: data.user.id,
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-      expires_at: data.session.expires_at,
-    });
+    return res
+      .status(201)
+      .json(
+        AuthApiResponse(
+          201,
+          "User has been created",
+          data.user.id,
+          data.session.access_token,
+          data.session.refresh_token,
+          data.session.expires_at,
+        ),
+      );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.log(ErrorMessage("500", errorMessage, res.locals.requestId));
