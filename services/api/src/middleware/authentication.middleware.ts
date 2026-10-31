@@ -17,6 +17,7 @@ const authenticateAndGetUser = async (
       return res.status(401).send("Should be a bearer token");
 
     const token = authorization[1];
+    req.accessToken = token;
 
     if (!token) return res.status(401).send("Should be a valid token");
 
